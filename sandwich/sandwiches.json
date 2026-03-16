@@ -1,0 +1,17 @@
+{
+  "dagobert": {
+    "details_sandwich": ["Fromage", "Jambon", "Mayonnaise"]
+  },
+  "curry": {
+    "details_sandwich": ["Poulet curry"]
+  },
+  "vegetarien": {
+    "details_sandwich": ["Bébé épinard(s)", "Moutarde", "Huile d'olive", "Oignon", "Mozzarella"]
+  },
+  "jambon": {
+    "details_sandwich": ["Jambon", "Fromage"]
+  },
+  "sandwich du mois": {
+    "details_sandwich": ["Pas encore diponible"]
+  }
+}
