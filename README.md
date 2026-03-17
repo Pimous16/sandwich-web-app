@@ -86,3 +86,24 @@ Sandwich Web App est une application web permettant aux utilisateurs de consulte
 1. Clonez le dépôt dans votre serveur local :
    ```bash
    git clone <url-du-repo>
+
+### Installation
+1. **Placez le projet dans le dossier racine de votre serveur web**
+   - Exemple : `htdocs` pour XAMPP.
+
+2. **Installez les dépendances avec Composer** :
+   ```bash
+   composer install
+   ```
+
+3. **Importez le fichier SQL dans votre base de données** :
+   - Ouvrez votre outil de gestion de base de données (ex. : phpMyAdmin).
+   - Créez une nouvelle base de données.
+   - Importez le fichier `sandwich_projet-po_cyril.sql`.
+
+4. **Configurez la connexion à la base de données dans `db.php`**.
+
+5. **Lancez l'application dans votre navigateur** :
+   ```
+   http://localhost/sandwich-web-app/sandwich/index.php
+   ```
