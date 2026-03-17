@@ -2,26 +2,26 @@
   "dagobert": {
     "details_sandwich": ["Fromage", "Jambon", "Mayonnaise"],
     "price": 2.50,
-    "image": "images/dagobert.jpg"
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80"
   },
   "curry": {
     "details_sandwich": ["Poulet curry"],
     "price": 3.00,
-    "image": "images/curry.jpg"
+    "image": "https://images.unsplash.com/photo-1604908177535-2a8dbd47b9a9?auto=format&fit=crop&w=800&q=80"
   },
   "vegetarien": {
     "details_sandwich": ["Bébé épinard(s)", "Moutarde", "Huile d'olive", "Oignon", "Mozzarella"],
     "price": 2.80,
-    "image": "images/vegetarien.jpg"
+    "image": "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=800&q=80"
   },
   "jambon": {
     "details_sandwich": ["Jambon", "Fromage"],
     "price": 2.20,
-    "image": "images/jambon.jpg"
+    "image": "https://images.unsplash.com/photo-1603052875615-8bdbb62a5858?auto=format&fit=crop&w=800&q=80"
   },
   "sandwich du mois": {
     "details_sandwich": ["Pas encore disponible"],
     "price": 3.50,
-    "image": "images/sandwich_du_mois.jpg"
+    "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80"
   }
 }

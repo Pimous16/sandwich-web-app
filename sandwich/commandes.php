@@ -10,16 +10,19 @@ try {
 } catch (PDOException $e) {
     die("Erreur de connexion à la base de données : " . $e->getMessage());
 }
-// Récupérer les commandes depuis la base de données
+// Récupérer les commandes depuis la base de données (avec la crudités pour l'affichage)
 $commandes = [];
-$sql = "SELECT id_commande, jour, nom FROM commandes WHERE id_utilisateur = :user_id";
+$sql = "SELECT id_commande, jour, nom, crudites FROM commandes WHERE id_utilisateur = :user_id";
 $stmt = $db_connection->prepare($sql);
 $stmt->execute([':user_id' => $_SESSION['user_id']]);
 $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-//echo "<pre>";
-//var_dump($commandes);
-//echo "</pre>";
 
+// Charger les images des sandwichs depuis le fichier JSON (pour l'affichage)
+$sandwiches = [];
+$jsonPath = __DIR__ . '/sandwiches.json';
+if (file_exists($jsonPath)) {
+    $sandwiches = json_decode(file_get_contents($jsonPath), true) ?? [];
+}
 
 // Vérifier si une commande est modifiable
 function estModifiable($jour) {
@@ -31,20 +34,6 @@ function estModifiable($jour) {
     $dateCommande->setTime(20, 0);
     $dateCommande->modify('-1 day');
     return $heureActuelle < $dateCommande;
-}
-// Sauvegarder les modifications
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    foreach ($_POST['commandes'] as $jour => $nom) {
-        $sql = "UPDATE commandes SET nom = :nom WHERE jour = :jour AND id_utilisateur = :user_id";
-        $stmt = $db_connection->prepare($sql);
-        $stmt->execute([
-            ':nom' => $nom,
-            ':jour' => $jour,
-            ':user_id' => $_SESSION['user_id']
-        ]);
-    }
-    header('Location: commandes.php');
-    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -59,42 +48,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h2 class="text-center">Gestion des Commandes de la Semaine</h2>
-        <form method="POST">
-            <table class="table table-bordered">
-                <thead>
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>Jour</th>
+                    <th>Sandwich</th>
+                    <th>Crudités</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($commandes as $commande): 
+                    $nom = $commande['nom'] ?? 'Inconnu';
+                    $key = strtolower($nom);
+                    $imageUrl = $sandwiches[$key]['image'] ?? 'https://via.placeholder.com/120?text=Sandwich';
+                    $isEditable = estModifiable($commande['jour']);
+                ?>
                     <tr>
-                        <th>Jour</th>
-                        <th>Commande</th>
-                        <th>Action</th>
+                        <td><?= htmlspecialchars($commande['jour']) ?></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($nom) ?>" class="sandwich-thumb">
+                                <div>
+                                    <div class="fw-bold"><?= htmlspecialchars($nom) ?></div>
+                                    <?php if (!empty($sandwiches[$key]['price'])): ?>
+                                        <small class="text-muted">Prix: <?= htmlspecialchars($sandwiches[$key]['price']) ?>€</small>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </td>
+                        <td><?= htmlspecialchars($commande['crudites'] ?? '') ?></td>
+                        <td>
+                            <?php if ($isEditable): ?>
+                                <a href="crud.php?action=modifier&id_commande=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                <a href="crud.php?action=delete&id_commande=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette commande ?');">Supprimer</a>
+                            <?php else: ?>
+                                <span class="badge bg-secondary">Verrouillée</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($commandes as $commande): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($commande['jour']) ?></td>
-                            <td>
-                                <?php if (is_string($commande) && estModifiable($commande['jour'])): ?>
-                                    <input type="text" name="commandes[<?= htmlspecialchars($jour) ?>]" value="<?= htmlspecialchars($commande) ?>" class="form-control">
-                                <?php elseif (is_string($commande['nom'])): ?>
-                                    <?= htmlspecialchars($commande['nom']) ?>
-                                <?php else: ?>
-                                    <span class="text-danger">Donnée invalide</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php if (!estModifiable($commande['jour'])): ?>
-                                    <a href="crud.php?action=delete&id_commande=<?= $commande['id_commande'] ?>"  class="btn btn-danger">Effacer</a>
-                                    <a href="crud.php?action=modifier&id_commande=<?= $commande['id_commande'] ?>"  class="btn btn-success">modifier</a>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table><br>
-            <!--<div class="text-center">
-                <button type="submit" class="btn btn-primary">Enregistrer les Modifications</button>
-            </div>-->
-        </form>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
 
         <div class="bottom">
             <a href="index.php">
