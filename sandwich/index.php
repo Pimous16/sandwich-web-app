@@ -2,21 +2,43 @@
 session_start();
 $filename = 'sandwiches.json'; // Chemin vers le fichier JSON
 
-// Lire le fichier JSON et le décoder en un tableau associatif PHP
-$sandwiches = json_decode(file_get_contents($filename), true);
+// Inclure la connexion à la base de données
+include 'db.php';
 
-$days = [
-    'Monday' => 'Lundi',
-    'Tuesday' => 'Mardi',
-    'Wednesday' => 'Mercredi',
-    'Thursday' => 'Jeudi',
-    'Friday' => 'Vendredi',
-    'Saturday' => 'Samedi',
-    'Sunday' => 'Dimanche',
-];
+// Vérifier si l'utilisateur est connecté
+$user_name = "Utilisateur"; // Nom par défaut
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
 
+    // Requête pour récupérer le login de l'utilisateur
+    $sql = "SELECT login FROM utilisateur WHERE id_utilisateur = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-$date = date('l');
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $user_name = $row['login'];
+    }
+
+    $stmt->close();
+}
+
+// Vérifier si le fichier JSON existe et peut être lu
+if (file_exists($filename)) {
+    $json_content = file_get_contents($filename);
+    $sandwiches = json_decode($json_content, true);
+
+    // Vérifier si le contenu JSON a été correctement décodé
+    if ($sandwiches === null) {
+        $sandwiches = [];
+        error_log("Erreur : Impossible de décoder le fichier JSON.");
+    }
+} else {
+    $sandwiches = [];
+    error_log("Erreur : Le fichier sandwiches.json est introuvable.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -39,10 +61,11 @@ $date = date('l');
     <header>
 
         <div class="header-container d-flex justify-content-between align-items-center">
-            <h1 class="m-0">Sandwich</h1>
+            <h1 class="m-0">CEPES Sandwich</h1>
 
             <div class="user-links">
 
+                <h2>Hey <?= htmlspecialchars($user_name) ?>! 👋</h2>
                 <?php
                 if (isset($_SESSION['user_id'])) {
                     // Afficher les boutons pour les utilisateurs connectés
@@ -61,29 +84,40 @@ $date = date('l');
     </header>
 
     <div class="container mt-5">
+        <section class="popular-picks mt-4">
+            <h3>Popular Picks</h3>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <?php if (!empty($sandwiches)): ?>
+                    <?php foreach ($sandwiches as $name => $details): ?>
+                        <div class="card">
+                            <img src="<?= $details['image'] ?>" class="card-img-top" alt="<?= $name ?>">
+                            <div class="card-body">
+                                <h5 class="card-title"><?= ucfirst($name) ?></h5>
+                                <p class="card-text">Prix: <?= $details['price'] ?> €</p>
+                                <a href="sandwich_detail/sandwich.php?name=<?= urlencode($name) ?>" class="btn btn-primary">Add +</a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>Aucun sandwich disponible pour le moment.</p>
+                <?php endif; ?>
+            </div>
+        </section>
 
-        <h2 class="text-center mb-4">Choisissez votre sandwich</h2>
-
-        <div class="d-flex flex-wrap justify-content-center gap-3">
-            <?php foreach ($sandwiches as $name => $details): ?>
-                <a href="sandwich_detail/sandwich.php?name=<?= urlencode($name) ?>" class="case"><?= ucfirst($name) ?></a>
-            <?php endforeach; ?>
-
-        </div><br>
-
-        <!--<div class="mt-5 text-center">
-            <a href="probleme.php" class="btn btn-warning btn-lg report-problem">
-                <span>Signaler un problème</span>
-            </a>
-        </div>-->
-
-        <!--<div class="mt-3 text-center">
-            <img src="temp/<?= $days[$date] ?>_<?= $_SESSION['user_id'] ?>.png" alt="QR Code de la commande du jour">
-        </div>-->
+        <section class="categories mt-5">
+            <h3>Categories</h3>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <div class="category">Classic</div>
+                <div class="category">Hot Sandwiches</div>
+                <div class="category">Salads</div>
+                <div class="category">Drinks & Snacks</div>
+                <div class="category">Sets</div>
+            </div>
+        </section>
     </div>
 
-    <footer class="text-center mt-5 py-3" style="background-color: var(--primary-color); color: white;">
-        <p>Copyright&copy; Tous droits réservés Cyril du CEPES 2025</p>
+    <footer class="text-center mt-5 py-3" style="background-color: #007bff; color: white;">
+        <p>Copyright&copy; Tous droits réservés CEPES Sandwich 2026</p>
     </footer>
 </body>
 </html>

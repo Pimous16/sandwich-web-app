@@ -1,17 +1,27 @@
 {
   "dagobert": {
-    "details_sandwich": ["Fromage", "Jambon", "Mayonnaise"]
+    "details_sandwich": ["Fromage", "Jambon", "Mayonnaise"],
+    "price": 2.50,
+    "image": "images/dagobert.jpg"
   },
   "curry": {
-    "details_sandwich": ["Poulet curry"]
+    "details_sandwich": ["Poulet curry"],
+    "price": 3.00,
+    "image": "images/curry.jpg"
   },
   "vegetarien": {
-    "details_sandwich": ["Bébé épinard(s)", "Moutarde", "Huile d'olive", "Oignon", "Mozzarella"]
+    "details_sandwich": ["Bébé épinard(s)", "Moutarde", "Huile d'olive", "Oignon", "Mozzarella"],
+    "price": 2.80,
+    "image": "images/vegetarien.jpg"
   },
   "jambon": {
-    "details_sandwich": ["Jambon", "Fromage"]
+    "details_sandwich": ["Jambon", "Fromage"],
+    "price": 2.20,
+    "image": "images/jambon.jpg"
   },
   "sandwich du mois": {
-    "details_sandwich": ["Pas encore diponible"]
+    "details_sandwich": ["Pas encore disponible"],
+    "price": 3.50,
+    "image": "images/sandwich_du_mois.jpg"
   }
 }

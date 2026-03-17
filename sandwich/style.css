@@ -1,10 +1,10 @@
 /* Palette de couleurs */
 :root {
-    --primary-color: #686868; /* Vert principal */
-    --secondary-color: #FF9800; /* Orange secondaire */
-    --background-color: #ffffff; /* Fond clair */
-    --text-color: #333333; /* Texte principal */
-    --button-hover: #001068; /* Couleur au survol des boutons */
+    --primary-color: #007bff; /* Bleu principal */
+    --secondary-color: #ffcc00; /* Jaune secondaire */
+    --background-color: #f8f9fa; /* Fond clair */
+    --text-color: #212529; /* Texte principal */
+    --button-hover: #0056b3; /* Couleur au survol des boutons */
 }
 
 /* Mode sombre */
@@ -161,4 +161,78 @@ a:hover {
 .report-problem:hover::after {
     transform: translate(-50%, -50%) scale(1); /* Affiche le symbole */
     opacity: 1;
+}
+
+/* Styles pour la section Popular Picks */
+.popular-picks {
+    text-align: center;
+}
+
+.popular-picks .card {
+    width: 18rem;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.popular-picks .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.popular-picks .card img {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.popular-picks .card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Styles pour la section Build Your Own */
+.build-your-own {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.build-your-own a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    transition: background-color 0.3s ease;
+}
+
+.build-your-own a:hover {
+    background-color: var(--button-hover);
+}
+
+/* Styles pour les catégories */
+.categories {
+    text-align: center;
+}
+
+.categories .category {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 20px;
+    margin: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.categories .category:hover {
+    background-color: var(--button-hover);
+    transform: scale(1.1);
 }
