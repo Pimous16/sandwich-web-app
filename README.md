@@ -85,10 +85,16 @@ Sandwich Web App est une application web permettant aux utilisateurs de consulte
 ### Étapes
 1. Clonez le dépôt dans votre serveur local :
    ```bash
+<<<<<<< HEAD
    git clone <url-du-repo>```
 
 ### Installation
 
+=======
+   git clone <url-du-repo>
+
+### Installation
+>>>>>>> 6ec1b836a3949b908b1e84973fc4ba8eec9af4f6
 1. **Placez le projet dans le dossier racine de votre serveur web**
    - Exemple : `htdocs` pour XAMPP.
 
@@ -107,4 +113,8 @@ Sandwich Web App est une application web permettant aux utilisateurs de consulte
 5. **Lancez l'application dans votre navigateur** :
    ```
    http://localhost/sandwich-web-app/sandwich/index.php
+<<<<<<< HEAD
    ```
+=======
+   ```
+>>>>>>> 6ec1b836a3949b908b1e84973fc4ba8eec9af4f6
