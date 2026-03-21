@@ -1,12 +1,23 @@
 <?php
+session_start();
+
 // Charger le fichier JSON contenant les détails des sandwichs
 $filename = '../sandwiches.json';
-$sandwiches = json_decode(file_get_contents($filename), true);
+$sandwiches = [];
+if (file_exists($filename)) {
+    $sandwiches = json_decode(file_get_contents($filename), true) ?: [];
+}
+
+$sandwich_name = '';
+$is_valid_sandwich = false;
 
 if (isset($_GET['name'])) {
-    $sandwich_name = strtolower($_GET['name']);
-} else {
-    $sandwich_name = '';
+    $sandwich_name = strtolower(trim($_GET['name']));
+    $is_valid_sandwich = isset($sandwiches[$sandwich_name]);
+}
+
+if (!$is_valid_sandwich) {
+    $error_message = 'Le sandwich demandé est introuvable.';
 }
 ?>
 <!DOCTYPE html>
@@ -20,7 +31,12 @@ if (isset($_GET['name'])) {
 </head>
 <body>
 
-    <h1><?php echo ucfirst($sandwich_name); ?></h1>
+    <h1><?php echo htmlspecialchars(ucfirst($sandwich_name)); ?></h1>
+
+    <?php if (!empty($error_message)): ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
+        <a class="btn btn-secondary" href="../index.php">Retour au menu</a>
+    <?php else: ?>
 
     <form method="post" action="data.php">   
     <table>
@@ -67,27 +83,53 @@ if (isset($_GET['name'])) {
                     $fin_semaine = new DateTime('this friday 23:59:59');
                     $semaine = [];
 
+                    // Commander semaine suivante à partir du vendredi 16h ou weekend
+                    $nowNum = (int) $aujourd_hui->format('N'); // 1=Mon ... 7=Dim
+                    $aujourd_hui_16h = new DateTime('today 16:00');
+                    $nextWeekMode = ($nowNum === 5 && $aujourd_hui >= $aujourd_hui_16h) || $nowNum >= 6;
+
                     foreach ($jours as $jour_nom) {
                         $jour = clone $aujourd_hui;
 
-                        switch ($jour_nom) {
-                            case 'Lundi': $jour->modify('this week monday'); break;
-                            case 'Mardi': $jour->modify('this week tuesday'); break;
-                            case 'Jeudi': $jour->modify('this week thursday'); break;
-                            case 'Vendredi': $jour->modify('this week friday'); break;
+                        if ($nextWeekMode) {
+                            switch ($jour_nom) {
+                                case 'Lundi': $jour->modify('next week monday'); break;
+                                case 'Mardi': $jour->modify('next week tuesday'); break;
+                                case 'Jeudi': $jour->modify('next week thursday'); break;
+                                case 'Vendredi': $jour->modify('next week friday'); break;
+                            }
+                        } else {
+                            switch ($jour_nom) {
+                                case 'Lundi': $jour->modify('this week monday'); break;
+                                case 'Mardi': $jour->modify('this week tuesday'); break;
+                                case 'Jeudi': $jour->modify('this week thursday'); break;
+                                case 'Vendredi': $jour->modify('this week friday'); break;
+                            }
                         }
 
                         $date_formatee = $jour->format('d/m/Y');
-                        $is_disabled = ($jour < $aujourd_hui || ($jour->format('Y-m-d') === $aujourd_hui->format('Y-m-d') && $aujourd_hui > $heure_limite));
 
-                        if ($is_disabled && $jour < $fin_semaine) {
-                            $is_disabled = true;
+                        if ($nextWeekMode) {
+                            // Pour la semaine suivante, tous les jours sont disponibles (pas de désactivation liée au passé)
+                            $is_disabled = false;
+                        } else {
+                            // Logique actuelle pour la semaine en cours
+                            $is_disabled = ($jour < $aujourd_hui || ($jour->format('Y-m-d') === $aujourd_hui->format('Y-m-d') && $aujourd_hui > $heure_limite));
+
+                            if ($is_disabled && $jour < $fin_semaine) {
+                                $is_disabled = true;
+                            }
                         }
 
                         $semaine[$jour_nom] = [
                             'date' => $date_formatee,
                             'disabled' => $is_disabled
                         ];
+                    }
+
+                    // Afficher un message informatif si on commande pour la semaine suivante
+                    if ($nextWeekMode) {
+                        echo '<p class="next-week-info">🗓️ Commande pour la semaine prochaine</p>';
                     }
 
                     foreach ($semaine as $jour_nom => $data) {
@@ -101,12 +143,13 @@ if (isset($_GET['name'])) {
                         echo '</div>';
                     }
                     ?>
-                    <input type="submit">
+                    <button type="submit" id="confirm-btn" class="btn btn-primary">Commander</button>
                 </div>
             </td>
         </tr>
     </table>
     </form>
+    <?php endif; ?>
 
     <div class="bottom">
         <span class="btn" onclick="history.back()">

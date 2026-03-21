@@ -10,9 +10,9 @@ try {
 } catch (PDOException $e) {
     die("Erreur de connexion à la base de données : " . $e->getMessage());
 }
-// Récupérer les commandes depuis la base de données (avec la crudités pour l'affichage)
+// Récupérer les commandes depuis la base de données (avec la date pour la gestion action)
 $commandes = [];
-$sql = "SELECT id_commande, jour, nom, crudites FROM commandes WHERE id_utilisateur = :user_id";
+$sql = "SELECT id_commande, jour, date_de_commande, nom, crudites FROM commandes WHERE id_utilisateur = :user_id";
 $stmt = $db_connection->prepare($sql);
 $stmt->execute([':user_id' => $_SESSION['user_id']]);
 $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -31,9 +31,12 @@ function estModifiable($jour) {
     if (!$dateCommande) {
         return false;
     }
-    $dateCommande->setTime(20, 0);
-    $dateCommande->modify('-1 day');
-    return $heureActuelle < $dateCommande;
+
+    // Calcul de la date limite de modification : veille du jour de livraison à 16h
+    $deadline = (clone $dateCommande)->setTime(16, 0)->modify('-1 day');
+
+    // Action possible tant qu'on est avant la date limite
+    return $heureActuelle < $deadline;
 }
 ?>
 <!DOCTYPE html>
@@ -47,6 +50,10 @@ function estModifiable($jour) {
 </head>
 <body>
     <div class="container">
+        <?php if (isset($_SESSION['message']) && $_SESSION['message'] !== ''): ?>
+            <div class="alert alert-info"><?= htmlspecialchars($_SESSION['message']) ?></div>
+            <?php unset($_SESSION['message']); ?>
+        <?php endif; ?>
         <h2 class="text-center">Gestion des Commandes de la Semaine</h2>
         <table class="table table-bordered align-middle">
             <thead>
@@ -62,7 +69,7 @@ function estModifiable($jour) {
                     $nom = $commande['nom'] ?? 'Inconnu';
                     $key = strtolower($nom);
                     $imageUrl = $sandwiches[$key]['image'] ?? 'https://via.placeholder.com/120?text=Sandwich';
-                    $isEditable = estModifiable($commande['jour']);
+                    $isEditable = estModifiable($commande['date_de_commande']);
                 ?>
                     <tr>
                         <td><?= htmlspecialchars($commande['jour']) ?></td>

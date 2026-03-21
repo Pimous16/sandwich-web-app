@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 10 avr. 2025 à 12:27
+-- Généré le : sam. 21 mars 2026 à 22:33
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `sandwich`
 --
+CREATE DATABASE IF NOT EXISTS `sandwich` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `sandwich`;
 
 -- --------------------------------------------------------
 
@@ -31,8 +33,8 @@ CREATE TABLE `commandes` (
   `id_commande` int(11) NOT NULL,
   `jour` varchar(50) DEFAULT NULL,
   `nom` varchar(50) DEFAULT NULL,
-  `date_de_commande` varchar(50) DEFAULT NULL,
-  `total` varchar(50) DEFAULT NULL,
+  `date_de_commande` date DEFAULT NULL,
+  `total` decimal(10,2) DEFAULT NULL,
   `crudites` varchar(4) DEFAULT NULL,
   `id_cuisinier` smallint(6) DEFAULT NULL,
   `id_utilisateur` int(11) NOT NULL
@@ -90,9 +92,19 @@ CREATE TABLE `remarque` (
 
 CREATE TABLE `sandwich` (
   `id_sandwich` smallint(6) NOT NULL,
-  `prix` varchar(50) DEFAULT NULL,
+  `prix` decimal(10,2) DEFAULT NULL,
   `nom` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `sandwich`
+--
+
+INSERT INTO `sandwich` (`id_sandwich`, `prix`, `nom`) VALUES
+(1, 2.50, 'Dagobert'),
+(2, 3.00, 'Curry'),
+(3, 2.80, 'Vegetarien'),
+(4, 2.20, 'Jambon');
 
 -- --------------------------------------------------------
 
@@ -113,9 +125,9 @@ CREATE TABLE `signalement` (
 
 CREATE TABLE `transaction` (
   `id_transaction` int(11) NOT NULL,
-  `heure` varchar(50) DEFAULT NULL,
-  `montant` varchar(50) DEFAULT NULL,
-  `jour_` varchar(50) DEFAULT NULL,
+  `heure` time DEFAULT NULL,
+  `montant` decimal(10,2) DEFAULT NULL,
+  `jour_` date DEFAULT NULL,
   `id_utilisateur` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -127,8 +139,8 @@ CREATE TABLE `transaction` (
 
 CREATE TABLE `utilisateur` (
   `id_utilisateur` int(11) NOT NULL,
-  `solde` varchar(50) DEFAULT NULL,
-  `email` varchar(50) NOT NULL,
+  `solde` decimal(10,2) DEFAULT 0.00,
+  `email` varchar(100) NOT NULL,
   `login` varchar(50) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -142,29 +154,15 @@ CREATE TABLE `utilisateur` (
 --
 ALTER TABLE `commandes`
   ADD PRIMARY KEY (`id_commande`),
-  ADD UNIQUE KEY `commandes_unique` (`jour`,`id_utilisateur`),
+  ADD UNIQUE KEY `commandes_unique` (`jour`,`id_utilisateur`,`date_de_commande`),
   ADD KEY `id_cuisinier` (`id_cuisinier`),
   ADD KEY `id_utilisateur` (`id_utilisateur`);
-
---
--- Index pour la table `composition`
---
-ALTER TABLE `composition`
-  ADD PRIMARY KEY (`id_commande`,`id_sandwich`),
-  ADD KEY `id_sandwich` (`id_sandwich`);
 
 --
 -- Index pour la table `cuisinier`
 --
 ALTER TABLE `cuisinier`
   ADD PRIMARY KEY (`id_cuisinier`);
-
---
--- Index pour la table `facturation`
---
-ALTER TABLE `facturation`
-  ADD PRIMARY KEY (`id_commande`,`id_transaction`),
-  ADD KEY `id_transaction` (`id_transaction`);
 
 --
 -- Index pour la table `remarque`
@@ -177,13 +175,6 @@ ALTER TABLE `remarque`
 --
 ALTER TABLE `sandwich`
   ADD PRIMARY KEY (`id_sandwich`);
-
---
--- Index pour la table `signalement`
---
-ALTER TABLE `signalement`
-  ADD PRIMARY KEY (`id_commande`,`id_remarque`),
-  ADD KEY `id_remarque` (`id_remarque`);
 
 --
 -- Index pour la table `transaction`
@@ -210,48 +201,34 @@ ALTER TABLE `commandes`
   MODIFY `id_commande` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pour la table `cuisinier`
+--
+ALTER TABLE `cuisinier`
+  MODIFY `id_cuisinier` smallint(6) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `remarque`
+--
+ALTER TABLE `remarque`
+  MODIFY `id_remarque` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `sandwich`
+--
+ALTER TABLE `sandwich`
+  MODIFY `id_sandwich` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT pour la table `transaction`
+--
+ALTER TABLE `transaction`
+  MODIFY `id_transaction` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  MODIFY `id_utilisateur` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- Contraintes pour les tables déchargées
---
-
---
--- Contraintes pour la table `commandes`
---
-ALTER TABLE `commandes`
-  ADD CONSTRAINT `commandes_ibfk_1` FOREIGN KEY (`id_cuisinier`) REFERENCES `cuisinier` (`id_cuisinier`),
-  ADD CONSTRAINT `commandes_ibfk_2` FOREIGN KEY (`id_utilisateur`) REFERENCES `utilisateur` (`id_utilisateur`);
-
---
--- Contraintes pour la table `composition`
---
-ALTER TABLE `composition`
-  ADD CONSTRAINT `composition_ibfk_1` FOREIGN KEY (`id_commande`) REFERENCES `commandes` (`id_commande`),
-  ADD CONSTRAINT `composition_ibfk_2` FOREIGN KEY (`id_sandwich`) REFERENCES `sandwich` (`id_sandwich`);
-
---
--- Contraintes pour la table `facturation`
---
-ALTER TABLE `facturation`
-  ADD CONSTRAINT `facturation_ibfk_1` FOREIGN KEY (`id_commande`) REFERENCES `commandes` (`id_commande`),
-  ADD CONSTRAINT `facturation_ibfk_2` FOREIGN KEY (`id_transaction`) REFERENCES `transaction` (`id_transaction`);
-
---
--- Contraintes pour la table `signalement`
---
-ALTER TABLE `signalement`
-  ADD CONSTRAINT `signalement_ibfk_1` FOREIGN KEY (`id_commande`) REFERENCES `commandes` (`id_commande`),
-  ADD CONSTRAINT `signalement_ibfk_2` FOREIGN KEY (`id_remarque`) REFERENCES `remarque` (`id_remarque`);
-
---
--- Contraintes pour la table `transaction`
---
-ALTER TABLE `transaction`
-  ADD CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`id_utilisateur`) REFERENCES `utilisateur` (`id_utilisateur`);
+  MODIFY `id_utilisateur` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

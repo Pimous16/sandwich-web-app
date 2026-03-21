@@ -11,18 +11,31 @@ try {
     die("Erreur de connexion à la base de données : " . $e->getMessage());
 }
 
-switch($_GET['action']){
+$action = trim($_GET['action'] ?? '');
+if ($action === '') {
+    header('Location: commandes.php');
+    exit();
+}
+
+switch($action){
     case 'delete':{
-        $db_connection->query("DELETE FROM commandes WHERE id_commande = {$_GET['id_commande']} AND id_utilisateur = {$_SESSION['user_id']}");
+        $id_commande = intval($_GET['id_commande'] ?? 0);
+        $sql = "DELETE FROM commandes WHERE id_commande = :id_commande AND id_utilisateur = :user_id";
+        $stmt = $db_connection->prepare($sql);
+        $stmt->execute([
+            ':id_commande' => $id_commande,
+            ':user_id' => $_SESSION['user_id']
+        ]);
         header('Location: commandes.php');
-        break;
+        exit();
     }
-    
+
     case 'creer':{
-        echo "suppression";
-        break;
+        // TODO: implémenter création depuis le formulaire si nécessaire
+        header('Location: commandes.php');
+        exit();
     }
-    
+
     case 'modifier': {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Récupérer les données du formulaire
