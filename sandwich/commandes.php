@@ -12,7 +12,7 @@ try {
 }
 // Récupérer les commandes depuis la base de données (avec la date pour la gestion action)
 $commandes = [];
-$sql = "SELECT id_commande, jour, date_de_commande, nom, crudites FROM commandes WHERE id_utilisateur = :user_id";
+$sql = "SELECT c.id_commande, c.jour, c.date_de_commande, c.nom, c.crudites, CASE WHEN f.id_commande IS NOT NULL THEN 1 ELSE 0 END AS is_paid FROM commandes c LEFT JOIN facturation f ON c.id_commande = f.id_commande WHERE c.id_utilisateur = :user_id";
 $stmt = $db_connection->prepare($sql);
 $stmt->execute([':user_id' => $_SESSION['user_id']]);
 $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -91,6 +91,11 @@ function estModifiable($jour) {
                                 <a href="crud.php?action=delete&id_commande=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette commande ?');">Supprimer</a>
                             <?php else: ?>
                                 <span class="badge bg-secondary">Verrouillée</span>
+                            <?php endif; ?>
+                            <?php if ($commande['is_paid'] == 0): ?>
+                                <a href="paiement.php?order_id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-success">Payer</a>
+                            <?php else: ?>
+                                <span class="badge bg-success">Payée</span>
                             <?php endif; ?>
                         </td>
                     </tr>
