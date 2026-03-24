@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandwich App — Design Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   variables.css — système partagé
+   ============================================ */
+:root {
+  /* Couleurs principales */
+  --c-brand:        #D4622A;
+  --c-brand-light:  #F5E6DC;
+  --c-brand-dark:   #A84718;
+  --c-accent:       #2A6A5A;
+  --c-accent-light: #D4EDE8;
+
+  /* Neutres */
+  --c-bg:           #FAFAF8;
+  --c-bg-card:      #FFFFFF;
+  --c-bg-subtle:    #F3F1ED;
+  --c-border:       #E5E2DA;
+  --c-border-hover: #C9C5BC;
+
+  /* Texte */
+  --c-text:         #1E1C18;
+  --c-text-muted:   #6B6860;
+  --c-text-light:   #9C9A94;
+
+  /* Status */
+  --c-success:      #2A6A5A;
+  --c-danger:       #C0392B;
+  --c-warning:      #D4622A;
+
+  /* Typographie */
+  --font-display:   'DM Serif Display', Georgia, serif;
+  --font-body:      'DM Sans', system-ui, sans-serif;
+
+  /* Espacements */
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  16px;
+  --sp-lg:  24px;
+  --sp-xl:  40px;
+
+  /* Coins */
+  --r-sm:   6px;
+  --r-md:   12px;
+  --r-lg:   20px;
+  --r-full: 999px;
+
+  /* Ombres */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.05);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.12);
+
+  /* Transitions */
+  --ease: cubic-bezier(.25,.46,.45,.94);
+  --dur: 220ms;
+}
+
+/* Mode sombre */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-bg:        #17160F;
+    --c-bg-card:   #211F17;
+    --c-bg-subtle: #2A271E;
+    --c-border:    #3A3729;
+    --c-text:      #F0EDE4;
+    --c-text-muted:#A09D94;
+    --c-text-light:#6B6860;
+    --c-brand-light:#3D2315;
+  }
+}
+
+/* ============================================
+   Base reset & utilitaires
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================
+   Navigation du démo (hors projet)
+   ============================================ */
+.demo-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E5E2DA;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  padding: var(--sp-sm) var(--sp-lg);
+  font-size: 13px;
+}
+.demo-nav span {
+  font-size: 12px;
+  margin-right: var(--sp-sm);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #9C9A94;
+}
+.demo-btn {
+  border: none;
+  background: transparent;
+  color: #1E1C18;
+  padding: 5px 14px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.demo-btn:hover {
+  background: #F3F1ED;
+  color: #000000;
+  transform: scale(1.06);
+}
+.demo-btn.active { background: var(--c-brand); color: #fff; }
+
+/* ============================================
+   Wrapper des vues
+   ============================================ */
+.view { display: none; padding-top: 48px; min-height: 100vh; }
+.view.active { display: block; }
+
+/* ============================================
+   COMPOSANTS PARTAGÉS
+   ============================================ */
+
+/* Header */
+.app-header {
+  background: var(--c-bg-card);
+  border-bottom: 1px solid var(--c-border);
+  padding: var(--sp-md) var(--sp-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 48px;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+}
+.app-logo {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--c-brand);
+  letter-spacing: -.01em;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+}
+.app-logo-icon {
+  width: 32px; height: 32px;
+  background: var(--c-brand);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.header-actions { display: flex; gap: var(--sp-sm); }
+
+/* Boutons */
+.btn {
+  display: inline-flex; align-items: center; gap: var(--sp-xs);
+  padding: 9px 18px;
+  border-radius: var(--r-full);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all var(--dur) var(--ease);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--c-brand);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(212,98,42,.3);
+}
+.btn-primary:hover {
+  background: var(--c-brand-dark);
+  box-shadow: 0 4px 14px rgba(212,98,42,.4);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  background: var(--c-bg-subtle);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+}
+.btn-secondary:hover {
+  background: var(--c-border);
+  border-color: var(--c-border-hover);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--c-text-muted);
+  border: 1px solid var(--c-border);
+}
+.btn-ghost:hover {
+  background: var(--c-bg-subtle);
+  color: var(--c-text);
+  border-color: var(--c-border-hover);
+  transform: scale(1.04);
+  box-shadow: var(--shadow-sm);
+}
+.btn-danger { background: var(--c-danger); color: #fff; }
+.btn-danger:hover { background: #A52F24; transform: translateY(-1px); }
+.btn-success { background: var(--c-accent); color: #fff; }
+.btn-success:hover { background: #1F5244; transform: translateY(-1px); }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+
+/* Card */
+.card {
+  background: var(--c-bg-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card-header {
+  padding: var(--sp-md) var(--sp-lg);
+  border-bottom: 1px solid var(--c-border);
+  font-weight: 600;
+  font-size: 15px;
+}
+.card-body { padding: var(--sp-lg); }
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--r-full);
+  font-size: 12px;
+  font-weight: 500;
+}
+.badge-brand { background: var(--c-brand-light); color: var(--c-brand-dark); }
+.badge-accent { background: var(--c-accent-light); color: var(--c-accent); }
+.badge-muted { background: var(--c-bg-subtle); color: var(--c-text-muted); }
+
+/* Formulaires */
+.form-group { margin-bottom: var(--sp-md); }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-muted);
+  margin-bottom: 6px;
+  letter-spacing: .01em;
+}
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--c-bg);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-md);
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--c-text);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  outline: none;
+  -webkit-appearance: none;
+}
+.form-control:focus {
+  border-color: var(--c-brand);
+  box-shadow: 0 0 0 3px rgba(212,98,42,.12);
+}
+.form-control::placeholder { color: var(--c-text-light); }
+
+/* Footer */
+.app-footer {
+  background: var(--c-text);
+  color: #9C9A94;
+  text-align: center;
+  padding: var(--sp-lg);
+  font-size: 13px;
+  margin-top: var(--sp-xl);
+}
+
+/* ============================================
+   VUE 1 — Index / Accueil
+   ============================================ */
+.hero {
+  background: var(--c-brand-light);
+  padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
+  border-bottom: 1px solid var(--c-border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  right: -60px; top: -60px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: rgba(212,98,42,.08);
+}
+.hero-tag {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--c-brand);
+  margin-bottom: var(--sp-sm);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 1.15;
+  color: var(--c-text);
+  margin-bottom: var(--sp-sm);
+}
+.hero-sub { color: var(--c-text-muted); font-size: 15px; }
+
+.section { padding: var(--sp-xl); }
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  margin-bottom: var(--sp-md);
+}
+
+.sandwich-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--sp-md);
+}
+.sandwich-card {
+  background: var(--c-bg-card);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-lg) var(--sp-md);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--c-text);
+  transition: all var(--dur) var(--ease);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+  position: relative;
+  overflow: hidden;
+}
+.sandwich-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--c-brand);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+.sandwich-card:hover {
+  border-color: var(--c-brand);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.sandwich-card:hover::after { opacity: .03; }
+.sandwich-card-emoji { font-size: 28px; margin-bottom: 4px; }
+.sandwich-card-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+.sandwich-card-price {
+  color: var(--c-brand);
+  font-size: 14px;
+  font-weight: 500;
+}
+.sandwich-card-arrow {
+  margin-left: auto;
+  color: var(--c-border-hover);
+  font-size: 18px;
+  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.sandwich-card:hover .sandwich-card-arrow {
+  transform: translateX(4px);
+  color: var(--c-brand);
+}
+
+/* ============================================
+   VUE 2 — Login
+   ============================================ */
+.auth-wrap {
+  min-height: calc(100vh - 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-xl) var(--sp-md);
+  background: var(--c-bg);
+}
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--c-bg-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.auth-header {
+  padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-brand-light);
+}
+.auth-logo {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--c-brand);
+  margin-bottom: var(--sp-xs);
+}
+.auth-subtitle { color: var(--c-text-muted); font-size: 14px; }
+.auth-body { padding: var(--sp-xl); }
+.auth-footer {
+  padding: var(--sp-md) var(--sp-xl);
+  border-top: 1px solid var(--c-border);
+  text-align: center;
+  font-size: 13px;
+  color: var(--c-text-muted);
+  background: var(--c-bg-subtle);
+}
+.auth-footer a { color: var(--c-brand); text-decoration: none; font-weight: 500; }
+.auth-footer a:hover { text-decoration: underline; }
+.alert {
+  padding: 10px var(--sp-md);
+  border-radius: var(--r-md);
+  font-size: 14px;
+  margin-bottom: var(--sp-md);
+  border: 1px solid;
+}
+.alert-danger {
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #991B1B;
+}
+.divider {
+  display: flex; align-items: center; gap: var(--sp-sm);
+  color: var(--c-text-light); font-size: 13px;
+  margin: var(--sp-lg) 0;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1;
+  height: 1px; background: var(--c-border);
+}
+
+/* ============================================
+   VUE 3 — Commandes
+   ============================================ */
+.page-header {
+  padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
+  border-bottom: 1px solid var(--c-border);
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+.page-sub { color: var(--c-text-muted); font-size: 14px; }
+
+.orders-wrap { padding: var(--sp-xl); }
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.orders-table thead tr {
+  background: var(--c-bg-subtle);
+}
+.orders-table th {
+  padding: 10px var(--sp-md);
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  border-bottom: 2px solid var(--c-border);
+}
+.orders-table td {
+  padding: 14px var(--sp-md);
+  border-bottom: 1px solid var(--c-border);
+  vertical-align: middle;
+}
+.orders-table tr:last-child td { border-bottom: none; }
+.orders-table tr:hover td { background: var(--c-bg-subtle); }
+.orders-table tbody tr { transition: background var(--dur) var(--ease); }
+.order-name { font-weight: 500; }
+.order-day { color: var(--c-text-muted); font-size: 13px; }
+.actions-cell { display: flex; gap: var(--sp-xs); }
+
+/* ============================================
+   VUE 4 — Détail sandwich
+   ============================================ */
+.detail-wrap { padding: var(--sp-xl); display: grid; grid-template-columns: 1fr 360px; gap: var(--sp-xl); }
+.detail-main {}
+.detail-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  margin-bottom: var(--sp-sm);
+}
+.detail-ingredients {
+  display: flex; flex-wrap: wrap; gap: var(--sp-sm);
+  margin: var(--sp-md) 0;
+}
+.ingredient-chip {
+  background: var(--c-bg-subtle);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-full);
+  padding: 5px 14px;
+  font-size: 13px;
+  color: var(--c-text-muted);
+  transition: all var(--dur) var(--ease);
+}
+.ingredient-chip:hover {
+  background: var(--c-brand-light);
+  border-color: var(--c-brand);
+  color: var(--c-brand-dark);
+}
+.option-group { margin: var(--sp-lg) 0; }
+.option-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: var(--sp-sm);
+}
+.radio-group { display: flex; gap: var(--sp-sm); }
+.radio-option {
+  flex: 1;
+  position: relative;
+}
+.radio-option input {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.radio-option label {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-text-muted);
+  transition: all var(--dur) var(--ease);
+  background: var(--c-bg-card);
+}
+.radio-option label:hover {
+  border-color: var(--c-brand);
+  color: var(--c-brand);
+  background: var(--c-brand-light);
+}
+.radio-option input:checked + label {
+  border-color: var(--c-brand);
+  background: var(--c-brand-light);
+  color: var(--c-brand-dark);
+}
+.days-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-sm); margin: var(--sp-sm) 0; }
+.day-option { position: relative; }
+.day-option input {
+  position: absolute; opacity: 0;
+  width: 1px; height: 1px;
+  clip: rect(0,0,0,0);
+}
+.day-option label {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all var(--dur) var(--ease);
+  background: var(--c-bg-card);
+}
+.day-option label:hover {
+  border-color: var(--c-accent);
+  background: var(--c-accent-light);
+}
+.day-option input:checked + label {
+  border-color: var(--c-accent);
+  background: var(--c-accent-light);
+  color: var(--c-accent);
+  font-weight: 500;
+}
+.day-option input:disabled + label {
+  opacity: .45;
+  cursor: not-allowed;
+  background: var(--c-bg-subtle);
+}
+.day-name { font-weight: 500; }
+.day-date { font-size: 12px; color: var(--c-text-light); }
+.day-option input:checked + label .day-date { color: var(--c-accent); }
+.order-summary {
+  position: sticky;
+  top: 96px;
+}
+.summary-price {
+  font-family: var(--font-display);
+  font-size: 36px;
+  color: var(--c-brand);
+  margin: var(--sp-sm) 0;
+}
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--c-border);
+  font-size: 14px;
+}
+.summary-row:last-of-type { border-bottom: none; }
+.summary-row-label { color: var(--c-text-muted); }
+.summary-row-value { font-weight: 500; }
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .detail-wrap { grid-template-columns: 1fr; }
+  .order-summary { position: static; }
+  .section { padding: var(--sp-lg); }
+  .hero { padding: var(--sp-lg); }
+  .orders-wrap { padding: var(--sp-md); overflow-x: auto; }
+  .orders-table { min-width: 520px; }
+}
+
+/* Accessibilité : focus visible */
+:focus-visible {
+  outline: 3px solid var(--c-brand);
+  outline-offset: 3px;
+}
+
+/* Animations respectueuses */
+@media (prefers-reduced-motion: no-preference) {
+  .sandwich-card { transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+  .btn { transition: all var(--dur) var(--ease); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation démo -->
+<nav class="demo-nav">
+  <span>✦ Aperçu</span>
+  <button class="demo-btn active" onclick="showView('index')">Accueil</button>
+  <button class="demo-btn" onclick="showView('login')">Connexion</button>
+  <button class="demo-btn" onclick="showView('commandes')">Commandes</button>
+  <button class="demo-btn" onclick="showView('detail')">Détail sandwich</button>
+</nav>
+
+<!-- ============== VUE 1 : INDEX ============== -->
+<div class="view active" id="view-index">
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">🥖</div>
+      Sandwich
+    </div>
+    <div class="header-actions">
+      <a href="#" class="btn btn-ghost btn-sm" onclick="showView('commandes')">Mes commandes</a>
+      <a href="#" class="btn btn-primary btn-sm" onclick="showView('login')">Se connecter</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-tag">Menu de la semaine</div>
+    <h1 class="hero-title">Choisissez votre<br>sandwich du jour</h1>
+    <p class="hero-sub">Commandez avant 11h20 pour être servi à midi.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Nos sandwichs</div>
+    <div class="sandwich-grid">
+      <a class="sandwich-card" href="#" onclick="showView('detail')">
+        <div class="sandwich-card-emoji">🧀</div>
+        <div class="sandwich-card-name">Dagobert</div>
+        <div class="sandwich-card-price">2,50 €</div>
+        <div style="margin-top:var(--sp-sm); display:flex; gap:4px; flex-wrap:wrap;">
+          <span class="badge badge-muted">Fromage</span>
+          <span class="badge badge-muted">Jambon</span>
+        </div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+      <a class="sandwich-card" href="#" onclick="showView('detail')">
+        <div class="sandwich-card-emoji">🍗</div>
+        <div class="sandwich-card-name">Curry</div>
+        <div class="sandwich-card-price">2,50 €</div>
+        <div style="margin-top:var(--sp-sm);">
+          <span class="badge badge-muted">Poulet curry</span>
+        </div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+      <a class="sandwich-card" href="#" onclick="showView('detail')">
+        <div class="sandwich-card-emoji">🥗</div>
+        <div class="sandwich-card-name">Végétarien</div>
+        <div class="sandwich-card-price">2,50 €</div>
+        <div style="margin-top:var(--sp-sm); display:flex; gap:4px; flex-wrap:wrap;">
+          <span class="badge badge-accent">Épinards</span>
+          <span class="badge badge-accent">Mozzarella</span>
+        </div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+      <a class="sandwich-card" href="#" onclick="showView('detail')">
+        <div class="sandwich-card-emoji">🥩</div>
+        <div class="sandwich-card-name">Jambon</div>
+        <div class="sandwich-card-price">2,50 €</div>
+        <div style="margin-top:var(--sp-sm); display:flex; gap:4px;">
+          <span class="badge badge-muted">Jambon</span>
+          <span class="badge badge-muted">Fromage</span>
+        </div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+      <a class="sandwich-card" href="#" onclick="showView('detail')" style="border-style: dashed; background: var(--c-bg-subtle);">
+        <div class="sandwich-card-emoji">⭐</div>
+        <div class="sandwich-card-name">Sandwich du mois</div>
+        <div style="color:var(--c-text-light); font-size:13px; margin-top:4px;">Bientôt disponible</div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    Copyright © CEPES 2025 — Cyril
+  </footer>
+</div>
+
+<!-- ============== VUE 2 : LOGIN ============== -->
+<div class="view" id="view-login">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">🥖 Sandwich</div>
+        <div class="auth-subtitle">Connectez-vous pour passer vos commandes</div>
+      </div>
+      <div class="auth-body">
+        <div class="alert alert-danger" style="display:none" id="auth-error">
+          Identifiants incorrects. Veuillez réessayer.
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Adresse email</label>
+          <input class="form-control" type="email" id="email" placeholder="vous@exemple.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Mot de passe</label>
+          <input class="form-control" type="password" id="password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:var(--sp-sm);" onclick="fakeLogin()">
+          Se connecter
+        </button>
+        <div class="divider">ou</div>
+        <button class="btn btn-secondary" style="width:100%; justify-content:center;" onclick="showView('index')">
+          Continuer en tant qu'invité
+        </button>
+      </div>
+      <div class="auth-footer">
+        Pas encore de compte ? <a href="#" onclick="showSignup()">S'inscrire ici</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== VUE 3 : COMMANDES ============== -->
+<div class="view" id="view-commandes">
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">🥖</div>
+      Sandwich
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showView('index')">← Retour</button>
+      <button class="btn btn-danger btn-sm">Se déconnecter</button>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <h1 class="page-title">Mes commandes</h1>
+    <p class="page-sub">Semaine du 24 au 28 mars 2026</p>
+  </div>
+
+  <div class="orders-wrap">
+    <div class="card">
+      <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Commandes de la semaine</span>
+        <button class="btn btn-primary btn-sm" onclick="showView('index')">+ Nouvelle commande</button>
+      </div>
+      <div style="overflow:auto;">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Jour</th>
+              <th>Sandwich</th>
+              <th>Crudités</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="order-name">Lundi</div>
+                <div class="order-day">24/03/2026</div>
+              </td>
+              <td><strong>Dagobert</strong></td>
+              <td><span class="badge badge-accent">Avec</span></td>
+              <td><span class="badge badge-muted">En attente</span></td>
+              <td class="actions-cell">
+                <button class="btn btn-ghost btn-sm">Modifier</button>
+                <button class="btn btn-danger btn-sm">Effacer</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="order-name">Mardi</div>
+                <div class="order-day">25/03/2026</div>
+              </td>
+              <td><strong>Végétarien</strong></td>
+              <td><span class="badge badge-muted">Sans</span></td>
+              <td><span class="badge badge-brand">Confirmé</span></td>
+              <td class="actions-cell">
+                <button class="btn btn-ghost btn-sm" disabled style="opacity:.4; cursor:not-allowed;">Modifier</button>
+                <button class="btn btn-danger btn-sm">Effacer</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="order-name">Jeudi</div>
+                <div class="order-day">27/03/2026</div>
+              </td>
+              <td><strong>Curry</strong></td>
+              <td><span class="badge badge-accent">Avec</span></td>
+              <td><span class="badge badge-muted">En attente</span></td>
+              <td class="actions-cell">
+                <button class="btn btn-ghost btn-sm">Modifier</button>
+                <button class="btn btn-danger btn-sm">Effacer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== VUE 4 : DETAIL ============== -->
+<div class="view" id="view-detail">
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">🥖</div>
+      Sandwich
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showView('index')">← Menu</button>
+    </div>
+  </header>
+
+  <div class="detail-wrap">
+    <div class="detail-main">
+      <div style="margin-bottom:var(--sp-sm);">
+        <span class="badge badge-brand">Disponible cette semaine</span>
+      </div>
+      <h1 class="detail-title">Dagobert</h1>
+      <p style="color:var(--c-text-muted); font-size:14px;">Sandwich classique genereux garni de nos meilleurs ingrédients.</p>
+
+      <div class="detail-ingredients">
+        <span class="ingredient-chip">🧀 Fromage</span>
+        <span class="ingredient-chip">🥩 Jambon</span>
+        <span class="ingredient-chip">🥄 Mayonnaise</span>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">Crudités</div>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="crudites" id="avec" value="avec" checked>
+            <label for="avec">🥗 Avec</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="crudites" id="sans" value="sans">
+            <label for="sans">❌ Sans</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">Jours de commande</div>
+        <div class="days-grid">
+          <div class="day-option">
+            <input type="checkbox" id="lundi" name="jours[]" value="Lundi">
+            <label for="lundi">
+              <div>
+                <div class="day-name">Lundi</div>
+                <div class="day-date">24/03/2026</div>
+              </div>
+              <span style="font-size:18px; color:var(--c-border)">○</span>
+            </label>
+          </div>
+          <div class="day-option">
+            <input type="checkbox" id="mardi" name="jours[]" value="Mardi" checked>
+            <label for="mardi">
+              <div>
+                <div class="day-name">Mardi</div>
+                <div class="day-date">25/03/2026</div>
+              </div>
+              <span style="font-size:18px;">✓</span>
+            </label>
+          </div>
+          <div class="day-option">
+            <input type="checkbox" id="jeudi" name="jours[]" value="Jeudi" disabled>
+            <label for="jeudi">
+              <div>
+                <div class="day-name">Jeudi</div>
+                <div class="day-date">27/03/2026</div>
+              </div>
+              <span style="font-size:12px; color:var(--c-text-light)">Passé</span>
+            </label>
+          </div>
+          <div class="day-option">
+            <input type="checkbox" id="vendredi" name="jours[]" value="Vendredi">
+            <label for="vendredi">
+              <div>
+                <div class="day-name">Vendredi</div>
+                <div class="day-date">28/03/2026</div>
+              </div>
+              <span style="font-size:18px; color:var(--c-border)">○</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Récapitulatif -->
+    <div class="order-summary">
+      <div class="card">
+        <div class="card-header">Récapitulatif</div>
+        <div class="card-body">
+          <div class="summary-price">2,50 €</div>
+          <div class="summary-row">
+            <span class="summary-row-label">Sandwich</span>
+            <span class="summary-row-value">Dagobert</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-row-label">Crudités</span>
+            <span class="summary-row-value" id="crudites-summary">Avec</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-row-label">Jours</span>
+            <span class="summary-row-value" id="days-summary">Mardi</span>
+          </div>
+          <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:var(--sp-md);">
+            Confirmer la commande
+          </button>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:var(--sp-sm);" onclick="showView('index')">
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const btns = document.querySelectorAll('.demo-btn');
+  const map = { index: 0, login: 1, commandes: 2, detail: 3 };
+  if (map[name] !== undefined) btns[map[name]].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function fakeLogin() {
+  const e = document.getElementById('email').value;
+  const p = document.getElementById('password').value;
+  if (e && p) { showView('index'); }
+  else { document.getElementById('auth-error').style.display = 'block'; }
+}
+
+function showSignup() {
+  alert('Page inscription — même structure que login avec champ nom.');
+}
+
+// Synchroniser le récapitulatif
+document.querySelectorAll('input[name="crudites"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('crudites-summary').textContent =
+      document.querySelector('input[name="crudites"]:checked')?.value === 'avec' ? 'Avec' : 'Sans';
+  });
+});
+document.querySelectorAll('input[name="jours[]"]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const checked = [...document.querySelectorAll('input[name="jours[]"]:checked')].map(c => c.value);
+    document.getElementById('days-summary').textContent = checked.length ? checked.join(', ') : 'Aucun';
+    const label = cb.closest('.day-option').querySelector('span:last-child');
+    label.textContent = cb.checked ? '✓' : '○';
+    label.style.color = cb.checked ? '' : 'var(--c-border)';
+  });
+});
+</script>
+</body>
+</html>

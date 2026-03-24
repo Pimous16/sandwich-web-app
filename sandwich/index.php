@@ -66,6 +66,7 @@ if (file_exists($filename)) {
             <div class="user-links">
 
                 <h2>Hey <?= htmlspecialchars($user_name) ?>! 👋</h2>
+                <a href="design-preview.html" class="btn btn-info" style="background:#2A6A5A; border-color:#2A6A5A;">Design preview</a>
                 <?php
                 if (isset($_SESSION['user_id'])) {
                     // Afficher les boutons pour les utilisateurs connectés
