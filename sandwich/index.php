@@ -61,11 +61,12 @@ if (file_exists($filename)) {
     <header>
 
         <div class="header-container d-flex justify-content-between align-items-center">
-            <h1 class="m-0">CEPES Sandwich</h1>
+            <h1 class="m-0">Sandwich</h1>
 
             <div class="user-links">
 
                 <h2>Hey <?= htmlspecialchars($user_name) ?>! 👋</h2>
+                <a href="design-preview.html" class="btn btn-info" style="background:#2A6A5A; border-color:#2A6A5A;">Design preview</a>
                 <?php
                 if (isset($_SESSION['user_id'])) {
                     // Afficher les boutons pour les utilisateurs connectés

@@ -1,4 +1,11 @@
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandwich App — Design Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
 /* ============================================
    variables.css — système partagé
    ============================================ */
@@ -640,3 +647,366 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+</style>
+</head>
+<body>
+
+<!-- Navigation démo -->
+<nav class="demo-nav">
+  <span>✦ Aperçu</span>
+  <button class="demo-btn active" onclick="showView('index')">Accueil</button>
+  <button class="demo-btn" onclick="showView('login')">Connexion</button>
+  <button class="demo-btn" onclick="showView('commandes')">Commandes</button>
+  <button class="demo-btn" onclick="showView('detail')">Détail sandwich</button>
+</nav>
+
+<!-- ============== VUE 1 : INDEX ============== -->
+<div class="view active" id="view-index">
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">🥖</div>
+      Sandwich
+    </div>
+    <div class="header-actions">
+      <a href="#" class="btn btn-ghost btn-sm" onclick="showView('commandes')">Mes commandes</a>
+      <a href="#" class="btn btn-primary btn-sm" onclick="showView('login')">Se connecter</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-tag">Menu de la semaine</div>
+    <h1 class="hero-title">Choisissez votre<br>sandwich du jour</h1>
+    <p class="hero-sub">Commandez avant 11h20 pour être servi à midi.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Nos sandwichs</div>
+    <div class="sandwich-grid">
+      <a class="sandwich-card" href="#" onclick="showView('detail')">
+        <div class="sandwich-card-emoji">🧀</div>
+        <div class="sandwich-card-name">Dagobert</div>
+        <div class="sandwich-card-price">2,50 €</div>
+        <div style="margin-top:var(--sp-sm); display:flex; gap:4px; flex-wrap:wrap;">
+          <span class="badge badge-muted">Fromage</span>
+          <span class="badge badge-muted">Jambon</span>
+        </div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+      <a class="sandwich-card" href="#" onclick="showView('detail')">
+        <div class="sandwich-card-emoji">🍗</div>
+        <div class="sandwich-card-name">Curry</div>
+        <div class="sandwich-card-price">2,50 €</div>
+        <div style="margin-top:var(--sp-sm);">
+          <span class="badge badge-muted">Poulet curry</span>
+        </div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+      <a class="sandwich-card" href="#" onclick="showView('detail')">
+        <div class="sandwich-card-emoji">🥗</div>
+        <div class="sandwich-card-name">Végétarien</div>
+        <div class="sandwich-card-price">2,50 €</div>
+        <div style="margin-top:var(--sp-sm); display:flex; gap:4px; flex-wrap:wrap;">
+          <span class="badge badge-accent">Épinards</span>
+          <span class="badge badge-accent">Mozzarella</span>
+        </div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+      <a class="sandwich-card" href="#" onclick="showView('detail')">
+        <div class="sandwich-card-emoji">🥩</div>
+        <div class="sandwich-card-name">Jambon</div>
+        <div class="sandwich-card-price">2,50 €</div>
+        <div style="margin-top:var(--sp-sm); display:flex; gap:4px;">
+          <span class="badge badge-muted">Jambon</span>
+          <span class="badge badge-muted">Fromage</span>
+        </div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+      <a class="sandwich-card" href="#" onclick="showView('detail')" style="border-style: dashed; background: var(--c-bg-subtle);">
+        <div class="sandwich-card-emoji">⭐</div>
+        <div class="sandwich-card-name">Sandwich du mois</div>
+        <div style="color:var(--c-text-light); font-size:13px; margin-top:4px;">Bientôt disponible</div>
+        <div class="sandwich-card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    Copyright © CEPES 2025 — Cyril
+  </footer>
+</div>
+
+<!-- ============== VUE 2 : LOGIN ============== -->
+<div class="view" id="view-login">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">🥖 Sandwich</div>
+        <div class="auth-subtitle">Connectez-vous pour passer vos commandes</div>
+      </div>
+      <div class="auth-body">
+        <div class="alert alert-danger" style="display:none" id="auth-error">
+          Identifiants incorrects. Veuillez réessayer.
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Adresse email</label>
+          <input class="form-control" type="email" id="email" placeholder="vous@exemple.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Mot de passe</label>
+          <input class="form-control" type="password" id="password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:var(--sp-sm);" onclick="fakeLogin()">
+          Se connecter
+        </button>
+        <div class="divider">ou</div>
+        <button class="btn btn-secondary" style="width:100%; justify-content:center;" onclick="showView('index')">
+          Continuer en tant qu'invité
+        </button>
+      </div>
+      <div class="auth-footer">
+        Pas encore de compte ? <a href="#" onclick="showSignup()">S'inscrire ici</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== VUE 3 : COMMANDES ============== -->
+<div class="view" id="view-commandes">
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">🥖</div>
+      Sandwich
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showView('index')">← Retour</button>
+      <button class="btn btn-danger btn-sm">Se déconnecter</button>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <h1 class="page-title">Mes commandes</h1>
+    <p class="page-sub">Semaine du 24 au 28 mars 2026</p>
+  </div>
+
+  <div class="orders-wrap">
+    <div class="card">
+      <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Commandes de la semaine</span>
+        <button class="btn btn-primary btn-sm" onclick="showView('index')">+ Nouvelle commande</button>
+      </div>
+      <div style="overflow:auto;">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Jour</th>
+              <th>Sandwich</th>
+              <th>Crudités</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="order-name">Lundi</div>
+                <div class="order-day">24/03/2026</div>
+              </td>
+              <td><strong>Dagobert</strong></td>
+              <td><span class="badge badge-accent">Avec</span></td>
+              <td><span class="badge badge-muted">En attente</span></td>
+              <td class="actions-cell">
+                <button class="btn btn-ghost btn-sm">Modifier</button>
+                <button class="btn btn-danger btn-sm">Effacer</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="order-name">Mardi</div>
+                <div class="order-day">25/03/2026</div>
+              </td>
+              <td><strong>Végétarien</strong></td>
+              <td><span class="badge badge-muted">Sans</span></td>
+              <td><span class="badge badge-brand">Confirmé</span></td>
+              <td class="actions-cell">
+                <button class="btn btn-ghost btn-sm" disabled style="opacity:.4; cursor:not-allowed;">Modifier</button>
+                <button class="btn btn-danger btn-sm">Effacer</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="order-name">Jeudi</div>
+                <div class="order-day">27/03/2026</div>
+              </td>
+              <td><strong>Curry</strong></td>
+              <td><span class="badge badge-accent">Avec</span></td>
+              <td><span class="badge badge-muted">En attente</span></td>
+              <td class="actions-cell">
+                <button class="btn btn-ghost btn-sm">Modifier</button>
+                <button class="btn btn-danger btn-sm">Effacer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== VUE 4 : DETAIL ============== -->
+<div class="view" id="view-detail">
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">🥖</div>
+      Sandwich
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="showView('index')">← Menu</button>
+    </div>
+  </header>
+
+  <div class="detail-wrap">
+    <div class="detail-main">
+      <div style="margin-bottom:var(--sp-sm);">
+        <span class="badge badge-brand">Disponible cette semaine</span>
+      </div>
+      <h1 class="detail-title">Dagobert</h1>
+      <p style="color:var(--c-text-muted); font-size:14px;">Sandwich classique genereux garni de nos meilleurs ingrédients.</p>
+
+      <div class="detail-ingredients">
+        <span class="ingredient-chip">🧀 Fromage</span>
+        <span class="ingredient-chip">🥩 Jambon</span>
+        <span class="ingredient-chip">🥄 Mayonnaise</span>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">Crudités</div>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="crudites" id="avec" value="avec" checked>
+            <label for="avec">🥗 Avec</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="crudites" id="sans" value="sans">
+            <label for="sans">❌ Sans</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">Jours de commande</div>
+        <div class="days-grid">
+          <div class="day-option">
+            <input type="checkbox" id="lundi" name="jours[]" value="Lundi">
+            <label for="lundi">
+              <div>
+                <div class="day-name">Lundi</div>
+                <div class="day-date">24/03/2026</div>
+              </div>
+              <span style="font-size:18px; color:var(--c-border)">○</span>
+            </label>
+          </div>
+          <div class="day-option">
+            <input type="checkbox" id="mardi" name="jours[]" value="Mardi" checked>
+            <label for="mardi">
+              <div>
+                <div class="day-name">Mardi</div>
+                <div class="day-date">25/03/2026</div>
+              </div>
+              <span style="font-size:18px;">✓</span>
+            </label>
+          </div>
+          <div class="day-option">
+            <input type="checkbox" id="jeudi" name="jours[]" value="Jeudi" disabled>
+            <label for="jeudi">
+              <div>
+                <div class="day-name">Jeudi</div>
+                <div class="day-date">27/03/2026</div>
+              </div>
+              <span style="font-size:12px; color:var(--c-text-light)">Passé</span>
+            </label>
+          </div>
+          <div class="day-option">
+            <input type="checkbox" id="vendredi" name="jours[]" value="Vendredi">
+            <label for="vendredi">
+              <div>
+                <div class="day-name">Vendredi</div>
+                <div class="day-date">28/03/2026</div>
+              </div>
+              <span style="font-size:18px; color:var(--c-border)">○</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Récapitulatif -->
+    <div class="order-summary">
+      <div class="card">
+        <div class="card-header">Récapitulatif</div>
+        <div class="card-body">
+          <div class="summary-price">2,50 €</div>
+          <div class="summary-row">
+            <span class="summary-row-label">Sandwich</span>
+            <span class="summary-row-value">Dagobert</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-row-label">Crudités</span>
+            <span class="summary-row-value" id="crudites-summary">Avec</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-row-label">Jours</span>
+            <span class="summary-row-value" id="days-summary">Mardi</span>
+          </div>
+          <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:var(--sp-md);">
+            Confirmer la commande
+          </button>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:var(--sp-sm);" onclick="showView('index')">
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const btns = document.querySelectorAll('.demo-btn');
+  const map = { index: 0, login: 1, commandes: 2, detail: 3 };
+  if (map[name] !== undefined) btns[map[name]].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function fakeLogin() {
+  const e = document.getElementById('email').value;
+  const p = document.getElementById('password').value;
+  if (e && p) { showView('index'); }
+  else { document.getElementById('auth-error').style.display = 'block'; }
+}
+
+function showSignup() {
+  alert('Page inscription — même structure que login avec champ nom.');
+}
+
+// Synchroniser le récapitulatif
+document.querySelectorAll('input[name="crudites"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('crudites-summary').textContent =
+      document.querySelector('input[name="crudites"]:checked')?.value === 'avec' ? 'Avec' : 'Sans';
+  });
+});
+document.querySelectorAll('input[name="jours[]"]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const checked = [...document.querySelectorAll('input[name="jours[]"]:checked')].map(c => c.value);
+    document.getElementById('days-summary').textContent = checked.length ? checked.join(', ') : 'Aucun';
+    const label = cb.closest('.day-option').querySelector('span:last-child');
+    label.textContent = cb.checked ? '✓' : '○';
+    label.style.color = cb.checked ? '' : 'var(--c-border)';
+  });
+});
+</script>
+</body>
+</html>
