@@ -83,6 +83,13 @@ if (file_exists($filename)) {
 
     </header>
 
+    <div class="container mt-3">
+        <?php if (isset($_SESSION['message']) && $_SESSION['message'] !== ''): ?>
+            <div class="alert alert-info"><?= htmlspecialchars($_SESSION['message']) ?></div>
+            <?php unset($_SESSION['message']); ?>
+        <?php endif; ?>
+    </div>
+
     <div class="container mt-5">
         <section class="popular-picks mt-4">
             <h3>Popular Picks</h3>
@@ -104,20 +111,10 @@ if (file_exists($filename)) {
             </div>
         </section>
 
-        <section class="categories mt-5">
-            <h3>Categories</h3>
-            <div class="d-flex flex-wrap justify-content-center gap-3">
-                <div class="category">Classic</div>
-                <div class="category">Hot Sandwiches</div>
-                <div class="category">Salads</div>
-                <div class="category">Drinks & Snacks</div>
-                <div class="category">Sets</div>
-            </div>
-        </section>
     </div>
 
     <footer class="text-center mt-5 py-3" style="background-color: #007bff; color: white;">
-        <p>Copyright&copy; Tous droits réservés CEPES Sandwich 2026</p>
+        <p>Copyright&copy; Tous droits réservés à Cyril Libouton et Alexy Viatour</p>
     </footer>
 </body>
 </html>
