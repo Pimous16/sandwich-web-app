@@ -114,7 +114,7 @@ if (file_exists($filename)) {
     </div>
 
     <footer class="text-center mt-5 py-3" style="background-color: #007bff; color: white;">
-        <p>Copyright&copy; Tous droits réservés CEPES Sandwich 2026</p>
+        <p>Copyright&copy; Tous droits réservés à Cyril Libouton et Alexy Viatour</p>
     </footer>
 </body>
 </html>
